@@ -1,9 +1,22 @@
-import { GraphQLSchema, GraphQLObjectType, GraphQLID, GraphQLList, GraphQLNonNull, GraphQLString, GraphQLBoolean } from "graphql";
-  
-  import { CustomerType, CustomerInputType } from "./customer/type";
-  
-  import { getCustomer, getCustomers, setCustomer, delCustomer } from "./customer/resolver";
-  
+const {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLID,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLString,
+  GraphQLBoolean
+} = require("graphql");
+
+const { CustomerType, CustomerInputType } = require("./customer/type");
+
+const {
+  getCustomer,
+  getCustomers,
+  setCustomer,
+  delCustomer
+} = require("./customer/resolver");
+
   const query = new GraphQLObjectType({
     name: "CustomerQuery",
     fields: {
@@ -38,8 +51,7 @@ import { GraphQLSchema, GraphQLObjectType, GraphQLID, GraphQLList, GraphQLNonNul
     }
   });
   
-  export default new GraphQLSchema({
+  module.exports = new GraphQLSchema({
     query,
     mutation
   });
-  

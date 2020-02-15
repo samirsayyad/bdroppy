@@ -20,7 +20,13 @@ const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY , HOST , } = process.env;
 const initDB = require("./database");
 initDB();
 ////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
 
+const mount = require("koa-mount");
+const graphqlHTTP = require("koa-graphql");
+const schema = require("./graphql/schema");
+
+///////////////////////////////////////////////////
 
 app.prepare().then(() => {
     const server = new Koa();
@@ -69,7 +75,15 @@ app.prepare().then(() => {
     });
 
     server.use(graphQLProxy({ version: ApiVersion.April19 }));
-
+    server.use(
+      mount(
+        "/graphql-mdb",
+        graphqlHTTP({
+          schema: schema,
+          graphiql: true
+        })
+      )
+    );
     server.use(verifyRequest());
     server.use(async (ctx) => {
       await handle(ctx.req, ctx.res);

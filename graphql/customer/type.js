@@ -1,4 +1,4 @@
-import graphql from "graphql";
+const graphql = require("graphql");
 
 const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLBoolean } = graphql;
 
@@ -19,4 +19,4 @@ const CustomerType = new GraphQLObjectType({
   }
 });
 
-export default { CustomerType, CustomerInputType: CustomerProps };
+module.exports = { CustomerType, CustomerInputType: CustomerProps };

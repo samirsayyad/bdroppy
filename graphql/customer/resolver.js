@@ -1,4 +1,4 @@
-import CusotmerModal, { find, findOne, deleteOne } from "../../models/customer";
+const CusotmerModal = require("../../models/customer");
 
 const getCustomers = (root, args, context, info) => {
   return find().exec();
@@ -17,4 +17,4 @@ const delCustomer = (root, args, context, info) => {
   return deleteOne({ shop_name: args.shop_name }).exec();
 };
 
-export default { getCustomer, getCustomers, setCustomer, delCustomer };
+module.exports = { getCustomer, getCustomers, setCustomer, delCustomer };
