@@ -1,10 +1,10 @@
 const CusotmerModal = require("../../models/customer");
 
 const getCustomers = (root, args, context, info) => {
-  return find().exec();
+  return CusotmerModal.find().exec();
 };
 const getCustomer = (root, args, context, info) => {
-  return findOne({shop_name : args.shop_name } ).exec();
+  return CusotmerModal.findOne({shop_name : args.shop_name } ).exec();
 };
 
 const setCustomer = (root, args, context, info) => {
@@ -14,7 +14,7 @@ const setCustomer = (root, args, context, info) => {
 
 const delCustomer = (root, args, context, info) => {
   console.log("args", args);
-  return deleteOne({ shop_name: args.shop_name }).exec();
+  return CusotmerModal.deleteOne({ shop_name: args.shop_name }).exec();
 };
 
 module.exports = { getCustomer, getCustomers, setCustomer, delCustomer };

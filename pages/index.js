@@ -1,22 +1,23 @@
-import {Page ,Layout , Tabs,Card} from '@shopify/polaris';
-import {useState , useCallback} from "react";
-import { TitleBar } from '@shopify/app-bridge-react';
+import { Page,Tabs,Card } from "@shopify/polaris";
+import { Context } from "@shopify/app-bridge-react";
+import { Redirect } from "@shopify/app-bridge/actions";
+import ApiConfigForm from "./tabs/ApiConfigForm";
 
+class Products extends React.Component {
 
-import apiConfiguration from "./tabs/apiConfiguration";
-function TabsContainer() {
-  const [selected, setSelected] = useState(0);
-  const handleTabChange = useCallback(
-    (selectedTabIndex) => setSelected(selectedTabIndex),
-    [],
-  );
-  const tabs = [
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedTab : 0 
+    }
+  } 
+  tabs = [
     {
       id: 'Api-Configuration',
       content: 'Api Configuration',
       accessibilityLabel: 'Api Configuration',
       panelID: 'Api-Configuration-tab',
-      page : apiConfiguration()
+      page : <ApiConfigForm></ApiConfigForm>
     },
     {
       id: 'my-catalogs',
@@ -30,25 +31,29 @@ function TabsContainer() {
     },
 
   ];
-  return (
-    <Page>
+  static contextType = Context;
+  handleTabChange = (selectedTabIndex) => {
+    this.setState({selectedTab  : selectedTabIndex})
+  };
+  render() {
+    return (
+<Page>
        {/* <TitleBar
           primaryAction={{
             content: 'BDroppy',
           }}
       /> */}
         <Card>
-          <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-            <Card.Section title={tabs[selected].content}>
-            {tabs[selected].page}
+          <Tabs tabs={this.tabs} selected={this.state.selectedTab} onSelect={this.handleTabChange}>
+            <Card.Section title={this.tabs[this.state.selectedTab].content}>
+            {this.tabs[this.state.selectedTab].page}
             </Card.Section>
           </Tabs>
         </Card>
       
     </Page>
-  );
+    );
+  }
 }
 
-const Index = () => TabsContainer();
-  
-export default Index;
+export default Products;

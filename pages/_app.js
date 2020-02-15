@@ -17,11 +17,11 @@ class MyApp extends App {
           <title>BDroppy App</title>
           <meta charSet="utf-8" />
         </Head>
-        <Provider config={config}>
+        {/* <Provider config={config}> */}
           <AppProvider i18n={translations}>
             <Component {...pageProps} />
           </AppProvider>
-        </Provider>
+        {/* </Provider> */}
 
       </React.Fragment>
     );
