@@ -14,7 +14,8 @@ const {
   getCustomer,
   getCustomers,
   setCustomer,
-  delCustomer
+  delCustomer ,
+  editCustomer
 } = require("./customer/resolver");
 
   const query = new GraphQLObjectType({
@@ -28,7 +29,7 @@ const {
       customer: {
         type: CustomerType,
         args: {
-          id: { type: GraphQLNonNull(GraphQLID) }
+          shop_name: { type: GraphQLNonNull(GraphQLString) }
         },
         resolve: getCustomer
       }
@@ -47,6 +48,12 @@ const {
         type: CustomerType,
         args: CustomerInputType,
         resolve: delCustomer
+      }
+      ,
+      editCustomer: {
+        type: CustomerType,
+        args: CustomerInputType,
+        resolve: editCustomer
       }
     }
   });

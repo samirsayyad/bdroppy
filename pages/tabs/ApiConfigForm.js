@@ -8,18 +8,21 @@ class ApiConfigForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      id : null ,
       api_key : "" ,
       api_password : "" ,
       api_mode : "Live mode" ,
-      shop_name : Cookies.get("shopOrigin") , 
+      shop_name : Cookies.get("shopOrigin") || "shop.test.bdroppy" , 
     }
+    this.gqlServerUrl ="/graphql-mdb";
 
+    this.getCustomer(this.state.shop_name)
     this.URL_options =  [
       {label: 'Live mode', value: 'Live mode'},
       {label: 'Sandbox mode', value: 'Sandbox mode'},
     ]
-    this.gqlServerUrl ="/graphql-mdb";
   }
+
 
   handleChange = (value , id ) =>{
      this.setState({
@@ -27,17 +30,31 @@ class ApiConfigForm extends Component {
      })
   }
   handleSubmit = () => {
-    const customer_data =  this.state
-    console.log(customer_data)
-    this.addCustomerToShopify(customer_data)
-    .then(res => {
-      console.log("create cusotmer", res);
-      console.log("succeed to add customer into app data");
-    })
-    .catch(err => {
-      console.log("failed to add customer into shopify");
-      console.log(err);
-    });
+    if (this.state.id !== null ){
+      const customer_data =  this.state
+      console.log( "handleSubmit edit" ,customer_data)
+      this.editCustomer(customer_data)
+      .then(res => {
+        console.log("editCustomer cusotmer", res);
+        console.log("succeed to editCustomer into app data");
+      })
+      .catch(err => {
+        console.log("failed to editCustomer into shopify");
+        console.log(err);
+      });
+    }else{
+      const customer_data =  this.state
+      console.log( "handleSubmit add" ,customer_data)
+      this.addCustomer(customer_data)
+      .then(res => {
+        console.log("create cusotmer", res);
+        console.log("succeed to add customer into app data");
+      })
+      .catch(err => {
+        console.log("failed to add customer into shopify");
+        console.log(err);
+      });
+    }
   }
 
   gqlServerOpts = (body, variables = null) => ({
@@ -54,41 +71,90 @@ class ApiConfigForm extends Component {
   });
 
 
-ADD_CUSTOMER_SHOPIFY = (customer_data) => {
-  const {
-    api_key,
-    api_password,
-    api_mode,
-    shop_name,
-    access_token,
-  } = customer_data;
+  ADD_CUSTOMER_GRAPHQL = (customer_data) => {
+    const {
+      api_key,
+      api_password,
+      api_mode,
+      shop_name,
+      access_token,
+    } = customer_data;
 
-  return `
-      mutation CustomerMutation	{
-        setCustomer(   
-          api_key:  "${api_key}",
-          api_password: "${api_password}",
-          
-          api_mode: "${api_mode}",
-          shop_name: "${shop_name}",
-          access_token : "${access_token}",
-         )
-        {
-  
-                id
-          
-        }
-    }`;
-};
+    return `
+        mutation CustomerMutation	{
+          setCustomer(
+            api_key:  "${api_key}",
+            api_password: "${api_password}",
+            
+            api_mode: "${api_mode}",
+            shop_name: "${shop_name}",
+            access_token : "${access_token}",
+          )
+          {
+    
+                  id
+            
+          }
+      }`;
+  };
 
 
+  EDIT_CUSTOMER_GRAPHQL = (customer_data) => {
+    const {
+      api_key,
+      api_password,
+      api_mode,
+      shop_name,
+      access_token,
+    } = customer_data;
 
-addCustomerToShopify = customer_data => {
-  return fetch(
-    this.gqlServerUrl,
-    this.gqlServerOpts(this.ADD_CUSTOMER_SHOPIFY(customer_data))
-  );
-};
+    return `
+        mutation CustomerMutation	{
+          editCustomer(
+            api_key:  "${api_key}",
+            api_password: "${api_password}",
+            api_mode: "${api_mode}",
+            shop_name: "${shop_name}",
+            access_token : "${access_token}",
+          )
+          {
+    
+                  id
+            
+          }
+      }`;
+  };
+
+  GET_CUSTOMER_GRAPHQL = (shop_name) => {
+    return `
+    {customer(shop_name :"${shop_name}" ) {
+     id , api_key , api_password , api_mode
+    }}
+      `;
+  };
+
+  addCustomer = customer_data => {
+    return fetch(
+      this.gqlServerUrl,
+      this.gqlServerOpts(this.ADD_CUSTOMER_GRAPHQL(customer_data))
+    );
+  };
+
+  editCustomer = customer_data => {
+    return fetch(
+      this.gqlServerUrl,
+      this.gqlServerOpts(this.EDIT_CUSTOMER_GRAPHQL(customer_data))
+    );
+  };
+  getCustomer = shop_name => {
+    fetch(
+      this.gqlServerUrl,
+      this.gqlServerOpts(this.GET_CUSTOMER_GRAPHQL(shop_name))
+    ) 
+    .then(response => response.json())
+    //.then(data => console.log("sdsds",data.data.customer) );
+    .then(data => this.setState( data.data.customer ) );
+  };
   render(){
     return(
       <div>
