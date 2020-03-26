@@ -1,1 +1,1 @@
-# bdroppy
+# Shopify Nodejs App Template
